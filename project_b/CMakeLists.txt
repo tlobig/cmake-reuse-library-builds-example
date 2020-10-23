@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 3.13)
+project(project_b)
+
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../static_lib ${CMAKE_CURRENT_BINARY_DIR}/_deps/static_lib)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../interface_lib ${CMAKE_CURRENT_BINARY_DIR}/_deps/interface_lib)
+find_package(static_lib QUIET PATHS ../static_lib)
+if (NOT static_lib_FOUND)
+message(STATUS "${CMAKE_CURRENT_BINARY_DIR}/../project_a/_deps/static_lib/cmake")
+find_path(static_lib_TARGETS_path NAMES static_libTargets.cmake PATHS "${CMAKE_CURRENT_BINARY_DIR}/../static_lib/cmake")
+include(${static_lib_TARGETS_path}/static_libTargets.cmake)
+endif()
+
+find_package(interface_lib QUIET PATHS ../interface_lib)
+if (NOT interface_lib_FOUND)
+message(STATUS "${CMAKE_CURRENT_BINARY_DIR}/../project_a/_deps/interface_lib/cmake")
+find_path(interface_lib_TARGETS_path NAMES interface_libTargets.cmake PATHS "${CMAKE_CURRENT_BINARY_DIR}/../interface_lib/cmake")
+include(${interface_lib_TARGETS_path}/interface_libTargets.cmake)
+endif()
+
+add_executable(project_b src/main.cpp)
+target_link_libraries(project_b static_lib::static_lib interface_lib::interface_lib)
